@@ -14,17 +14,20 @@
             android:orientation="vertical">
 
             <FrameLayout
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/bg"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/images"
+                    android:src="@drawable/text_bg"
                     android:scaleType="centerCrop"/>
                 <LinearLayout
+                    android:id="@+id/content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#cc333333"
                     android:orientation="vertical">
                     <LinearLayout
                         android:layout_width="match_parent"
