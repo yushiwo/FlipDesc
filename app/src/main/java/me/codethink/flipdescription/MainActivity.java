@@ -1,6 +1,5 @@
 package me.codethink.flipdescription;
 
-import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,8 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
+import android.view.animation.Transformation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,8 +44,13 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 currentLines = currentLines == LIMIT ? Integer.MAX_VALUE : LIMIT;
-                descriptions.setMaxLines(currentLines);
 
+                descriptions.setMaxLines(currentLines);
+                if(currentLines != LIMIT) {
+                    expand(contentView, 692, 1092);
+                } else {
+                    expand(contentView, 1092, 692);
+                }
 
                 Animation animation = new RotateAnimation(
                         currentLines == LIMIT ? 180 : 0,
@@ -66,6 +70,32 @@ public class MainActivity extends ActionBarActivity {
             }
         });
     }
+
+    public void expand(final View v, final  float originHeight, final float targetHeight) {
+        Log.v("ar_log", originHeight + " -> " + targetHeight);
+        Animation a = new Animation(){
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = /*interpolatedTime == 1
+                        ? LinearLayoutCompat.LayoutParams.WRAP_CONTENT
+                        :*/ (int)(originHeight + (targetHeight - originHeight) * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration(600);
+        a.setFillAfter(true);
+        v.startAnimation(a);
+    }
+
+
+
 
 
     @Override
