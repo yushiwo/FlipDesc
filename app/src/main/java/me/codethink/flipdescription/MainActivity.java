@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,7 +46,19 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View view) {
                 currentLines = currentLines == LIMIT ? Integer.MAX_VALUE : LIMIT;
                 descriptions.setMaxLines(currentLines);
-                showDetailButton.setRotation(180 - showDetailButton.getRotation());
+
+
+                Animation animation = new RotateAnimation(
+                        currentLines == LIMIT ? 180 : 0,
+                        currentLines == LIMIT ? 360 : 180,
+                        Animation.RELATIVE_TO_SELF,
+                        0.5f,
+                        Animation.RELATIVE_TO_SELF,
+                        0.5f);
+
+                animation.setDuration(300);
+                animation.setFillAfter(true);
+                showDetailButton.startAnimation(animation);
 
                 contentView.requestLayout();
 
