@@ -19,12 +19,13 @@ public class MainActivity extends ActionBarActivity {
     private int currentLines;
     int FULLSIZE = -1;
     int THUMBNAIL =-1;
+    private TextView descriptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final TextView descriptions = (TextView) findViewById(R.id.descriptions);
+        descriptions = (TextView) findViewById(R.id.descriptions);
 
         currentLines = LIMIT;
 
@@ -56,19 +57,16 @@ public class MainActivity extends ActionBarActivity {
         showDetailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentLines = currentLines == LIMIT ? Integer.MAX_VALUE : LIMIT;
 
-                descriptions.setMaxLines(currentLines);
-                Log.v("ar_log", getTextViewHeight(descriptions) + " " + descriptions.getHeight());
-                if(currentLines != LIMIT) {
+                if(currentLines == LIMIT) {
                     expand(contentView, THUMBNAIL, FULLSIZE);
                 } else {
                     expand(contentView, FULLSIZE, THUMBNAIL);
                 }
 
                 Animation animation = new RotateAnimation(
-                        currentLines == LIMIT ? 180 : 0,
-                        currentLines == LIMIT ? 360 : 180,
+                        currentLines == LIMIT ? 0 : 180,
+                        currentLines == LIMIT ? 180 : 360,
                         Animation.RELATIVE_TO_SELF,
                         0.5f,
                         Animation.RELATIVE_TO_SELF,
@@ -77,7 +75,6 @@ public class MainActivity extends ActionBarActivity {
                 animation.setDuration(300);
                 animation.setFillAfter(true);
                 showDetailButton.startAnimation(animation);
-
                 contentView.requestLayout();
 
 
@@ -86,7 +83,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void expand(final View v, final  float originHeight, final float targetHeight) {
-        Log.v("ar_log", originHeight + " -> " + targetHeight);
         Animation a = new Animation(){
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
@@ -102,9 +98,26 @@ public class MainActivity extends ActionBarActivity {
             }
         };
 
-        // 1dp/ms
         a.setDuration(600);
         a.setFillAfter(true);
+        a.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                currentLines = currentLines == LIMIT ? Integer.MAX_VALUE : LIMIT;
+                descriptions.setMaxLines(currentLines);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         v.startAnimation(a);
     }
 
