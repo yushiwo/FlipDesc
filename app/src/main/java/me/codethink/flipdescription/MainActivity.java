@@ -2,6 +2,7 @@ package me.codethink.flipdescription;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity {
     private static final int LIMIT = 2;
     private int currentLines;
+    int FULLSIZE = -1;
+    int THUMBNAIL =-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +35,21 @@ public class MainActivity extends ActionBarActivity {
         final ImageView bg = (ImageView) findViewById(R.id.bg);
         final View contentView = findViewById(R.id.content);
 
+
+
+
         contentView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
                 bg.getLayoutParams().height = contentView.getHeight();
                 bg.requestLayout();
+                if(THUMBNAIL == -1) {
+                    THUMBNAIL = contentView.getHeight();
+                }
+
+                if(FULLSIZE == -1) {
+                    FULLSIZE = THUMBNAIL + getTextViewHeight(descriptions) - descriptions.getHeight();
+                }
             }
         });
 
@@ -46,10 +59,11 @@ public class MainActivity extends ActionBarActivity {
                 currentLines = currentLines == LIMIT ? Integer.MAX_VALUE : LIMIT;
 
                 descriptions.setMaxLines(currentLines);
+                Log.v("ar_log", getTextViewHeight(descriptions) + " " + descriptions.getHeight());
                 if(currentLines != LIMIT) {
-                    expand(contentView, 692, 1092);
+                    expand(contentView, THUMBNAIL, FULLSIZE);
                 } else {
-                    expand(contentView, 1092, 692);
+                    expand(contentView, FULLSIZE, THUMBNAIL);
                 }
 
                 Animation animation = new RotateAnimation(
@@ -94,7 +108,12 @@ public class MainActivity extends ActionBarActivity {
         v.startAnimation(a);
     }
 
-
+    private int getTextViewHeight(TextView pTextView) {
+        Layout layout = pTextView.getLayout();
+        int desired = layout.getLineTop(pTextView.getLineCount());
+        int padding = pTextView.getCompoundPaddingTop() + pTextView.getCompoundPaddingBottom();
+        return desired + padding;
+    }
 
 
 
