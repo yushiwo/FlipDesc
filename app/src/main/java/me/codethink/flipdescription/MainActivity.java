@@ -3,7 +3,6 @@ package me.codethink.flipdescription;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Layout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,9 +85,7 @@ public class MainActivity extends ActionBarActivity {
         Animation a = new Animation(){
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = /*interpolatedTime == 1
-                        ? LinearLayoutCompat.LayoutParams.WRAP_CONTENT
-                        :*/ (int)(originHeight + (targetHeight - originHeight) * interpolatedTime);
+                v.getLayoutParams().height = (int)(originHeight + (targetHeight - originHeight) * interpolatedTime);
                 v.requestLayout();
             }
 
@@ -101,15 +98,24 @@ public class MainActivity extends ActionBarActivity {
         a.setDuration(600);
         a.setFillAfter(true);
         a.setAnimationListener(new Animation.AnimationListener() {
+            private boolean maxLineDidSet = false;
             @Override
             public void onAnimationStart(Animation animation) {
+                if(currentLines == Integer.MAX_VALUE) {
+                    currentLines = LIMIT;
+                    descriptions.setMaxLines(currentLines);
+                    maxLineDidSet = true;
+                }
 
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                currentLines = currentLines == LIMIT ? Integer.MAX_VALUE : LIMIT;
-                descriptions.setMaxLines(currentLines);
+                if(!maxLineDidSet && currentLines == LIMIT) {
+                    currentLines = Integer.MAX_VALUE;
+                    descriptions.setMaxLines(currentLines);
+                }
+
 
             }
 
